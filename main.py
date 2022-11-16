@@ -1,4 +1,4 @@
-import pygame, numpy as np, os, sys, math
+import pygame, numpy as np, os, sys, math, datetime
 from collections import deque
 
 pygame.init()
@@ -16,7 +16,7 @@ clock = pygame.time.Clock()
 dir_path = os.path.dirname(os.path.realpath(__file__))
 os.chdir(f'{dir_path}/images')
 
-img = pygame.image.load('img.jpg').convert_alpha()
+img = pygame.image.load('image.png').convert_alpha()
 
 img_arr = pygame.surfarray.pixels3d(img)
 
@@ -24,6 +24,8 @@ avg_dp = {}
 
 # w_h is a [int int], numpy array
 def make_dp(topleft: (int,int), w_h, depth: int):
+    if (topleft, tuple(w_h), depth) in avg_dp:
+        return avg_dp[(topleft, tuple(w_h), depth)]
     if w_h[0] == 1 or w_h[1] == 1:
         avg = np.array([0, 0, 0])
         for y in range(w_h[1]):
@@ -31,6 +33,7 @@ def make_dp(topleft: (int,int), w_h, depth: int):
                 avg += img_arr[topleft[0] + x][topleft[1] + y]
         avg = avg // (w_h[0] * w_h[1])
 
+        # for some reason implementation below is slower, on my end
         # avg = np.mean(img_arr[topleft[0]:topleft[0]+w_h[0],topleft[1]:topleft[1]+w_h[1]],axis=(0,1),dtype=np.int32)
         
         avg_dp[(topleft, tuple(w_h), depth)] = avg
@@ -65,31 +68,51 @@ result_rec = result.get_rect(center=SCR_CENTER)
 
 q = deque([((0,0),img_arr.shape[0:2],0)])
 
-max_depth = 8
+
+max_depth_bypass = 1
+line_thickness = 0
+rectangle = 0
 
 max_depth = min(math.ceil(math.log2(img_arr.shape[0])),math.ceil(math.log2(img_arr.shape[1]))) - 1
 
+if max_depth_bypass:
+    max_depth = min(10,max_depth)
+
 done = 0
+saved = 0
 is_running = True
 while is_running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             is_running = False
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_s:
+                saved = 1
+                # show some text that indicates saving
+                # ... 
+                name = str(datetime.datetime.now()).replace(':','-')
+                pygame.image.save_extended(result,f'{name}.png')
+                # show some text that indicates it has been saved
+                print('saved!')
+                pass
 
     if q:
         e = q.pop()
         r = pygame.Rect(e[0], e[1])
         c = avg_dp[e]
+
+        if rectangle:
+            b_r = 0
+        else:
+            b_r = min(r.w,r.h)//2
+
         pygame.draw.rect(result,pygame.Color(0,0,0,0),r)
-        # pygame.draw.rect(result,c,r)
-        pygame.draw.circle(result,c,r.center,min(r.w,r.h)//2)
+        pygame.draw.rect(result,c,r,0,b_r)
+
+        if line_thickness and (r.w > 3 or r.h > 3):
+            pygame.draw.rect(result,pygame.Color(10,10,10),r,line_thickness,b_r)
 
         if e[2] != max_depth:
-
-            # tl = make_dp(topleft, w_h // 2, depth+1)
-            # tr = make_dp((topleft[0] + w_h[0] // 2, topleft[1]), np.array([w_h[0]-w_h[0]//2,w_h[1]//2]), depth+1)
-            # bl = make_dp((topleft[0], topleft[1] + w_h[1] // 2), np.array([w_h[0]//2,w_h[1]-w_h[1]//2]), depth+1)
-            # br = make_dp((topleft[0] + w_h[0] // 2, topleft[1] + w_h[1] // 2), np.array([w_h[0]-w_h[0]//2,w_h[1]-w_h[1]//2]), depth+1)
 
             topleft = e[0]
             w_h = e[1]
