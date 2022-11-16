@@ -9,6 +9,8 @@ SCR_CENTER = (SCR_W // 2, SCR_H // 2)
 scr = pygame.display.set_mode(SCR_SIZE)
 gui_font = pygame.font.Font(None,30)
 
+# you can edit the threshold below yourself, there are also more stuff you can modify. search the term 'edit'
+
 ERROR_THRES = 1
 
 clock = pygame.time.Clock()
@@ -68,15 +70,22 @@ result_rec = result.get_rect(center=SCR_CENTER)
 
 q = deque([((0,0),img_arr.shape[0:2],0)])
 
-
-max_depth_bypass = 1
-line_thickness = 0
-rectangle = 0
-
 max_depth = min(math.ceil(math.log2(img_arr.shape[0])),math.ceil(math.log2(img_arr.shape[1]))) - 1
 
+# you can edit these variables
+max_depth_bypass = 1
+# will only be used if max_depth_bypass = 1
+# will not be used if the highest possible depth is less than it anyway
+max_depth_given_bypass = 9
+# recommended value is 1
+line_thickness = 0
+# pass 1 to turn it into an ellipse
+rectangle = 0
+
+# be careful about increasing max depth, as the time it takes to complete increases fast
+
 if max_depth_bypass:
-    max_depth = min(10,max_depth)
+    max_depth = min(max_depth_given_bypass,max_depth)
 
 done = 0
 saved = 0
@@ -144,3 +153,9 @@ sys.exit()
 # notes
 
 # error is computed via average manhattan for performance
+
+# passing a depth similar to the image does not help much, in fact it gives a slightly higher file size (provided both are pngs)
+
+# i do not have much control over this given this implementation as the format and saving of the image is handled by pygame
+
+# otherwise, passing even slightly lower depths works completely fine
