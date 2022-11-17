@@ -2,10 +2,15 @@ import pygame, numpy as np, os, sys, math, datetime, time
 from collections import deque
 from PIL import Image
 
+t0 = time.time_ns()
+nano_to_sec = 1e-09
+
 pygame.init()
 SCR_W, SCR_H = SCR_SIZE = (1080,720)
 SCR_CENTER = (SCR_W // 2, SCR_H // 2)
 scr = pygame.display.set_mode(SCR_SIZE)
+
+# anything that is marked as EDITABLE can be modified by the user
 
 # EDITABLE
 # edit the filename to load (without the folder)
@@ -30,9 +35,6 @@ max_depth_bypass = 0
 # will only be used if max_depth_bypass = 1
 # will not be used if the highest possible depth is less than it anyway
 max_depth_given_bypass = 10
-
-# be careful about increasing max depth, as the time it takes to complete increases fast
-# depth 10 takes around 30 seconds on my machine
 
 # EDITABLE
 # recommended values are 0, 1
@@ -124,8 +126,6 @@ test_color = pygame.Color(avg_dp[((0,0),img_arr.shape[0:2],0)])
 images = []
 
 done = 0
-t0 = time.time_ns()
-nano_to_sec = 1e-09
 curr_depth = 0
 is_running = True
 while is_running:
@@ -202,8 +202,9 @@ while is_running:
 
         try:
             images[0].save(f'{name}.gif', save_all=True, append_images=images[1:], loop=0, duration=[200 for i in range(len(images)-1)] + [2000])
-        except:
-            print('Cannot save as gif (not enough images)')
+        except Exception as e:
+            print('Cannot save as gif (not enough images), or see message:')
+            print(e)
 
         t1 = (time.time_ns() - t0) * nano_to_sec
         print('done!')
