@@ -16,7 +16,7 @@ img = pygame.image.load(file_name).convert_alpha()
 img_arr = pygame.surfarray.pixels3d(img)
 max_depth = min(math.ceil(math.log2(img_arr.shape[0])),math.ceil(math.log2(img_arr.shape[1]))) - 1
 
-# error threshold, recommended values are 0.5, 1
+# error threshold
 ERROR_THRES = 0.5
 
 # max depth without bypass is the highest possible depth with the given image
@@ -32,7 +32,7 @@ max_depth_given_bypass = 10
 # recommended values are 0, 1
 line_thickness = 0
 
-# pass 1 to turn it into an ellipse
+# pass 0 to turn it into an ellipse
 rectangle = 1
 
 # pass 0 for a transparent bg of the nodes, only makes sense for drawing ellipses, and only has an effect on the on-screen view (it is already transparent for the saved image)
