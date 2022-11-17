@@ -1,5 +1,6 @@
 import pygame, numpy as np, os, sys, math, datetime, time
 from collections import deque
+from PIL import Image
 
 pygame.init()
 SCR_W, SCR_H = SCR_SIZE = (1080,720)
@@ -111,6 +112,8 @@ q = deque([((0,0),img_arr.shape[0:2],0)])
 
 test_color = pygame.Color(avg_dp[((0,0),img_arr.shape[0:2],0)])
 
+images = []
+
 done = 0
 t0 = time.time_ns()
 nano_to_sec = 1e-09
@@ -129,6 +132,8 @@ while is_running:
 
         if curr_depth != depth :
             pygame.image.save_extended(result,f'{curr_depth}.png')
+            data = pygame.image.tostring(result, 'RGBA')
+            images.append(Image.frombytes('RGBA', img_arr.shape[0:2], data))
             curr_depth = depth
 
         if rectangle:
@@ -183,6 +188,14 @@ while is_running:
     elif not done:
         done = 1
         pygame.image.save_extended(result,f'{curr_depth}.png')
+        data = pygame.image.tostring(result, 'RGBA')
+        images.append(Image.frombytes('RGBA', img_arr.shape[0:2], data))
+
+        try:
+            images[0].save(f'{name}.gif', save_all=True, append_images=images[1:], loop=0, duration=[200 for i in range(len(images)-1)] + [2000])
+        except:
+            print('Cannot save as gif (not enough images)')
+
         t1 = (time.time_ns() - t0) * nano_to_sec
         print('done!')
         print(f'Finished in {t1:.2f} seconds.')
