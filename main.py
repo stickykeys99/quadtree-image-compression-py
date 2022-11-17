@@ -7,7 +7,7 @@ SCR_CENTER = (SCR_W // 2, SCR_H // 2)
 scr = pygame.display.set_mode(SCR_SIZE)
 
 # edit the filename to load
-file_name = 'Picture1.png'
+file_name = 'img.jpg'
 
 # (converts to an array)
 dir_path = os.path.dirname(os.path.realpath(__file__))
