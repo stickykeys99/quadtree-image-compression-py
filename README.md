@@ -37,7 +37,7 @@ If `py` does not work, try `python`, `python3` or the directory link to your Pyt
 
 There is no GUI for manipulating the controls. Instead, you are asked to rely on the comments in the code. 
 
-You can change what file is to be used, the error threshold, max depth, etc.
+You can change what file is to be used, the error threshold, max depth, or if you want to use ellipses for nodes, or to show node boundaries.
 
 ## Limitations
 
