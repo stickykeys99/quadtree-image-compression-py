@@ -7,7 +7,8 @@ SCR_W, SCR_H = SCR_SIZE = (1080,720)
 SCR_CENTER = (SCR_W // 2, SCR_H // 2)
 scr = pygame.display.set_mode(SCR_SIZE)
 
-# edit the filename to load
+# EDITABLE
+# edit the filename to load (without the folder)
 file_name = 'img.jpg'
 
 # (converts to an array)
@@ -17,12 +18,15 @@ img = pygame.image.load(file_name).convert_alpha()
 img_arr = pygame.surfarray.pixels3d(img)
 max_depth = min(math.ceil(math.log2(img_arr.shape[0])),math.ceil(math.log2(img_arr.shape[1]))) - 1
 
+# EDITABLE
 # error threshold
 ERROR_THRES = 0.5
 
+# EDITABLE
 # max depth without bypass is the highest possible depth with the given image
 max_depth_bypass = 0
 
+# EDITABLE
 # will only be used if max_depth_bypass = 1
 # will not be used if the highest possible depth is less than it anyway
 max_depth_given_bypass = 10
@@ -30,15 +34,20 @@ max_depth_given_bypass = 10
 # be careful about increasing max depth, as the time it takes to complete increases fast
 # depth 10 takes around 30 seconds on my machine
 
+# EDITABLE
 # recommended values are 0, 1
 line_thickness = 0
 
+# EDITABLE
 # pass 0 to turn it into an ellipse
 rectangle = 1
 
+# EDITABLE
 # pass 0 for a transparent bg of the nodes, only makes sense for drawing ellipses, and only has an effect on the on-screen view (it is already transparent for the saved image)
 # also reflected on the GUI bg
 black_bg = 0
+
+# nothing left to edit below
 
 if max_depth_bypass:
     max_depth = min(max_depth_given_bypass,max_depth)
