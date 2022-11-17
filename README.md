@@ -14,6 +14,7 @@ PIL (9.2.0)
   <img src="images/demo.png" height=590>
 </p>
 <h6 align="center"><i> Image by Peter Yan. Website: https://www.peteryanstudio.com/. </i></h6>
+<br>
 
 Performs a quadtree decomposition algorithm using a given image. A folder is created stamped with the time of creation, loaded with images at every depth of the decomposition process. A gif representing it is made at the end.
 
