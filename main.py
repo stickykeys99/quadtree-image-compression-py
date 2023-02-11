@@ -14,7 +14,7 @@ scr = pygame.display.set_mode(SCR_SIZE)
 
 # EDITABLE
 # edit the filename to load (without the folder)
-file_name = 'test2.jpg'
+file_name = 'test1.jpg'
 
 # (converts to an array)
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -23,9 +23,11 @@ img = pygame.image.load(file_name).convert_alpha()
 img_arr = pygame.surfarray.pixels3d(img)
 max_depth = min(math.ceil(math.log2(img_arr.shape[0])),math.ceil(math.log2(img_arr.shape[1]))) - 1
 
+img2 = pygame.image.load(file_name).convert_alpha()
+
 # EDITABLE
 # error threshold
-ERROR_THRES = 3.0
+ERROR_THRES = 8.0
 
 # EDITABLE
 # max depth without bypass is the highest possible depth with the given image
@@ -49,7 +51,7 @@ rectangle = 1
 # also reflected on the GUI bg
 black_bg = 0
 
-line_depth = 3
+line_depth = 4
 
 # nothing left to edit below
 
@@ -123,10 +125,10 @@ on_screen_rect = on_screen.get_rect(center=SCR_CENTER)
 
 pygame.display.update()
 
-name = str(datetime.datetime.now()).replace(':','-').split('.', 1)[0]
-if not os.path.exists(f'{dir_path}/images/{name}'): 
-    os.makedirs(f'{dir_path}/images/{name}')
-os.chdir(f'{dir_path}/images/{name}')
+# name = str(datetime.datetime.now()).replace(':','-').split('.', 1)[0]
+# if not os.path.exists(f'{dir_path}/images/{name}'): 
+#     os.makedirs(f'{dir_path}/images/{name}')
+# os.chdir(f'{dir_path}/images/{name}')
 
 q = deque([((0,0),img_arr.shape[0:2],0)])
 q2 = deque([((0,0),img_arr.shape[0:2],0)])
@@ -178,29 +180,29 @@ while is_running:
             if avg_error > ERROR_THRES:
                 [q2.appendleft(child) for child in children]
 
-    if q:
-        e = q.pop()
-        r = pygame.Rect(e[0], e[1])
-        c = avg_dp[e]
-        depth = e[2]
+    # if q:
+    #     e = q.pop()
+    #     r = pygame.Rect(e[0], e[1])
+    #     c = avg_dp[e]
+    #     depth = e[2]
 
-        if curr_depth != depth :
-            result.blit(mask,(0,0))
-            pygame.image.save_extended(result,f'{curr_depth}.png')
-            data = pygame.image.tostring(result, 'RGBA')
-            images.append(Image.frombytes('RGBA', img_arr.shape[0:2], data))
-            curr_depth = depth
+    #     if curr_depth != depth :
+    #         result.blit(mask,(0,0))
+    #         pygame.image.save_extended(result,f'{curr_depth}.png')
+    #         data = pygame.image.tostring(result, 'RGBA')
+    #         images.append(Image.frombytes('RGBA', img_arr.shape[0:2], data))
+    #         curr_depth = depth
 
-        if rectangle:
-            b_r = 0
-        else:
-            b_r = min(r.w,r.h)//2
+    #     if rectangle:
+    #         b_r = 0
+    #     else:
+    #         b_r = min(r.w,r.h)//2
 
-        # for the result
+    #     # for the result
 
-        # pygame.draw.rect(result,pygame.Color(0,0,0,0),r)
-        # pygame.draw.rect(result,test_color,r)
-        pygame.draw.rect(result,c,r,0,b_r)
+    #     # pygame.draw.rect(result,pygame.Color(0,0,0,0),r)
+    #     # pygame.draw.rect(result,test_color,r)
+    #     pygame.draw.rect(result,c,r,0,b_r)
 
         # if line_thickness and (r.w > 3 or r.h > 3) and depth <= line_depth:
         #     pygame.draw.rect(result,pygame.Color(10,10,10),r,line_thickness,b_r)
@@ -223,42 +225,49 @@ while is_running:
 
         # dont forget to uncomment the update call below
 
-        if depth != max_depth:
+        # if depth != max_depth:
 
-            topleft = e[0]
-            w_h = e[1]
-            depth = e[2]
+        #     topleft = e[0]
+        #     w_h = e[1]
+        #     depth = e[2]
 
-            children = ((topleft, (w_h[0] // 2,w_h[1] // 2), depth+1), 
-                        ((topleft[0] + w_h[0] // 2, topleft[1]), (w_h[0]-w_h[0]//2,w_h[1]//2), depth+1),
-                        ((topleft[0], topleft[1] + w_h[1] // 2), (w_h[0]//2,w_h[1]-w_h[1]//2), depth+1),
-                        ((topleft[0] + w_h[0] // 2, topleft[1] + w_h[1] // 2), (w_h[0]-w_h[0]//2,w_h[1]-w_h[1]//2), depth+1))
+        #     children = ((topleft, (w_h[0] // 2,w_h[1] // 2), depth+1), 
+        #                 ((topleft[0] + w_h[0] // 2, topleft[1]), (w_h[0]-w_h[0]//2,w_h[1]//2), depth+1),
+        #                 ((topleft[0], topleft[1] + w_h[1] // 2), (w_h[0]//2,w_h[1]-w_h[1]//2), depth+1),
+        #                 ((topleft[0] + w_h[0] // 2, topleft[1] + w_h[1] // 2), (w_h[0]-w_h[0]//2,w_h[1]-w_h[1]//2), depth+1))
 
-            colors = [avg_dp[i] for i in children]
+        #     colors = [avg_dp[i] for i in children]
 
-            errors = [np.mean(np.abs(c-color),axis=0) for color in colors]
+        #     errors = [np.mean(np.abs(c-color),axis=0) for color in colors]
 
-            avg_error = np.mean(errors)
+        #     avg_error = np.mean(errors)
 
-            if avg_error > ERROR_THRES:
-                [q.appendleft(child) for child in children]
-
-        
+        #     if avg_error > ERROR_THRES:
+        #         [q.appendleft(child) for child in children]
+    
     elif not done:
-        done = 1
-        pygame.image.save_extended(result,f'{curr_depth}.png')
-        data = pygame.image.tostring(result, 'RGBA')
-        images.append(Image.frombytes('RGBA', img_arr.shape[0:2], data))
 
-        try:
-            images[0].save(f'{name}.gif', save_all=True, append_images=images[1:], loop=0, duration=[200 for i in range(len(images)-1)] + [2000])
-        except Exception as e:
-            print('Cannot save as gif (not enough images), or see message:')
-            print(e)
+        img2.blit(mask,(0,0))
+
+        done = 1
+        # pygame.image.save_extended(result,f'{curr_depth}.png')
+        # data = pygame.image.tostring(result, 'RGBA')
+        # images.append(Image.frombytes('RGBA', img_arr.shape[0:2], data))
+
+        # try:
+        #     images[0].save(f'{name}.gif', save_all=True, append_images=images[1:], loop=0, duration=[200 for i in range(len(images)-1)] + [2000])
+        # except Exception as e:
+        #     print('Cannot save as gif (not enough images), or see message:')
+        #     print(e)
+
+        name = str(datetime.datetime.now()).replace(':','-').split('.', 1)[0]
+        pygame.image.save_extended(img2,f'{name}.png')
 
         t1 = (time.time_ns() - t0) * nano_to_sec
         print('done!')
         print(f'Finished in {t1:.2f} seconds.')
+
+        is_running = False
             
     # pygame.display.update(dirty)
     clock.tick()
