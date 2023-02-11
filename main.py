@@ -49,7 +49,7 @@ rectangle = 1
 # also reflected on the GUI bg
 black_bg = 0
 
-line_depth = 5
+line_depth = 3
 
 # nothing left to edit below
 
